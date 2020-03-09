@@ -8,11 +8,17 @@ from rest_framework.response import Response
 from rest_framework import status
 from . models import employee
 from .serializers import employeeSerializer
+from rest_framework import generics
 
 
-class employeeList(APIView):
+class employeeList(generics.ListAPIView):
 
-    def get(self,request):
-        employees = employee.objects.all()
-        serializer = employeeSerializer(employees, many=True)
-        return Response(serializer.data)
+    #def get(self,request):
+    employees = employee.objects.all()
+    serializer_class = employeeSerializer(employees, many=True)
+        #return Response(serializer.data)
+
+    def get_queryset(self):
+        queryset=employee.objects.all()
+        var=self.request.query_params.get("first_name","")
+        return queryset.filter(first_name=var)
